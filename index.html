@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="agd-partner-manual-verification" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Itinerary - Chiang Khan to Santhakham</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 id="trip-title">Loading...</h1>
+                <p id="trip-description">Loading...</p>
+                <div class="trip-meta">
+                    <span class="date" id="trip-date">Loading...</span>
+                    <span class="duration" id="trip-duration">Loading...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="itinerary-section">
+                <h2>Itinerary</h2>
+                <div class="timeline" id="timeline">
+                    <!-- Timeline entries will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="map-section">
+                <h2>Map</h2>
+                <div id="map" class="map-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
