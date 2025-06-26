@@ -1,49 +1,64 @@
 {
   "title": "Dauin Macro Diving Expedition",
-  "description": "A 5-day diving trip to the hidden gem of Dauin, Philippines, based on a travel video by Bella Shek. Explore the unique volcanic ash seabed, a paradise for macro photography, and search for rare marine life like the incredible 'solar-powered' Sheep Nudibranch (Costasiella kuroshimae).",
-  "date": "2025-09-08",
+  "description": "A 5-day diving trip to the hidden gem of Dauin, Philippines. Explore the unique volcanic ash seabed, a paradise for macro photography, and search for rare marine life like the incredible 'solar-powered' Sheep Nudibranch (Costasiella kuroshimae).",
+  "author": {
+    "full_name": "Bella Shek",
+    "profile_img": "./IMG_3538.jpg",
+    "ig_url": "https://www.instagram.com/latashabella"
+  },
+  "source_url": "https://www.instagram.com/reel/DG5FDrwSdyh/?igsh=enUyZ2R4d280MGE4",
+  "ota": [
+    {
+      "provider": "trip.com",
+      "url": "https://www.trip.com/hotels/list?city=703709&display=Negros%20Oriental&optionId=703709&optionType=City&optionName=Negros%20Oriental&Allianceid=6647292&SID=227805467&trip_sub1=&trip_sub3=D4188690"
+    },
+    {
+      "provider": "agoda.com",
+      "url": "https://www.agoda.com/partners/partnersearch.aspx?pcs=1&cid=1944792&hl=en-us&city=702286"
+    }
+  ],
   "duration": 5,
   "entries": [
     {
       "title": "Arrival and Exploration of Dauin",
       "description": "Arrive in Dauin, a coastal municipality known for its volcanic black sand beaches. Settle in and take some time to explore the laid-back coastal town.",
       "address": "Dauin, Negros Oriental, Philippines",
-      "date": "2025-09-08",
+      "day": "1",
       "time": "14:00:00"
     },
     {
       "title": "Macro Diving Session: The Hunt for Sheep Nudibranch",
       "description": "A guided morning dive focusing on Dauin's famous muck diving sites. The main objective is to spot and photograph the tiny, 'solar-powered' Sheep Nudibranch on the volcanic sand seabed, a true macro paradise.",
       "address": "Dauin Marine Sanctuaries, Dauin, Negros Oriental, Philippines",
-      "date": "2025-09-09",
+      "day": "2",
       "time": "09:00:00"
     },
     {
       "title": "Afternoon Dive and Underwater Photography",
       "description": "A second dive to explore the rich biodiversity of the area. Practice macro photography skills to capture the intricate details of the various strange and wonderful sea creatures.",
       "address": "Dauin Marine Sanctuaries, Dauin, Negros Oriental, Philippines",
-      "date": "2025-09-09",
+      "day": "2",
       "time": "13:30:00"
     },
     {
       "title": "Discovering More Marine Wonders",
       "description": "Another full day dedicated to diving. With a local guide, explore different dive spots known for unique critters. The clear water quality enhances the experience of observing the diverse marine life.",
       "address": "Dauin Marine Sanctuaries, Dauin, Negros Oriental, Philippines",
-      "date": "2025-09-10",
+      "day": "3",
       "time": "09:30:00"
     },
     {
       "title": "Relax and Enjoy the Local Vibe",
       "description": "Spend the day relaxing on the beach, interacting with the local community, and enjoying the tranquil atmosphere of Dauin as seen in the video.",
       "address": "Dauin Beach, Negros Oriental, Philippines",
-      "date": "2025-09-11",
+      "day": "4",
       "time": "11:00:00"
     },
     {
       "title": "Departure",
       "description": "Final morning in Dauin. Enjoy a local breakfast before departing.",
       "address": "Dauin, Negros Oriental, Philippines",
-      "date": "2025-09-12",
+      "day": "5",
       "time": "10:00:00"
     }
   ]

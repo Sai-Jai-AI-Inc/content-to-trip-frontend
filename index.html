@@ -4,7 +4,7 @@
     <meta name="agd-partner-manual-verification" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trip Itinerary - Chiang Khan to Santhakham</title>
+    <title>Trip Itinerary</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -15,9 +15,33 @@
             <div class="header-content">
                 <h1 id="trip-title">Loading...</h1>
                 <p id="trip-description">Loading...</p>
-                <div class="trip-meta">
-                    <span class="date" id="trip-date">Loading...</span>
-                    <span class="duration" id="trip-duration">Loading...</span>
+                <div class="trip-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Duration:</span>
+                        <span class="detail-value" id="trip-duration">Loading...</span>
+                    </div>
+                
+                    <div class="detail-item" id="author-section" style="display: none;">
+                        <span class="detail-label">Inspired by:</span>
+                        <div class="author-info">
+                            <img class="author-avatar" id="author-avatar" src="" alt="" style="display: none;">
+                            <a class="author-link" id="trip-author" href="#" target="_blank"></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-section">
+                    <div class="original-section" id="original-section" style="display: none;">
+                        <span class="section-label">Original:</span>
+                        <a class="watch-btn" id="source-link" href="#" target="_blank">
+                            <span class="btn-icon">▶</span>
+                            Watch Video
+                        </a>
+                    </div>
+                
+                    <div class="booking-section" id="booking-section" style="display: none;">
+                        <div class="ota-buttons" id="ota-buttons"></div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -35,6 +59,37 @@
                 <div id="map" class="map-container"></div>
             </div>
         </div>
+        <section class="cta-section" id="cta-section" style="display: none;">
+            <div class="cta-content">
+                <div class="cta-header">
+                    <h2 class="cta-title">Ready to Experience This Adventure?</h2>
+                    <p class="cta-subtitle">Book your stay and start planning your own expedition!</p>
+                </div>
+        
+                <div class="cta-benefits">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🏨</div>
+                        <span class="benefit-text">Best Hotel Deals</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">💰</div>
+                        <span class="benefit-text">Exclusive Discounts</span>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">⚡</div>
+                        <span class="benefit-text">Instant Booking</span>
+                    </div>
+                </div>
+        
+                <div class="cta-buttons" id="cta-buttons">
+                    <!-- Buttons will be populated by JavaScript -->
+                </div>
+        
+                <p class="cta-disclaimer">
+                    Prices and availability may vary. Book now to secure your adventure!
+                </p>
+            </div>
+        </section>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

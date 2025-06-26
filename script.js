@@ -31,6 +31,30 @@ function formatDate(dateString) {
     });
 }
 
+// Group entries by day
+function groupEntriesByDay(entries) {
+    const grouped = {};
+    entries.forEach(entry => {
+        const day = entry.day || '1';
+        if (!grouped[day]) {
+            grouped[day] = [];
+        }
+        grouped[day].push(entry);
+    });
+    return grouped;
+}
+
+// Create day header
+function createDayHeader(dayNumber, entriesCount) {
+    const dayDiv = document.createElement('div');
+    dayDiv.className = 'day-header';
+    dayDiv.innerHTML = `
+        <h3>Day ${dayNumber}</h3>
+        <span class="day-count">${entriesCount} activit${entriesCount === 1 ? 'y' : 'ies'}</span>
+    `;
+    return dayDiv;
+}
+
 // Create timeline entry
 function createTimelineEntry(entry) {
     const entryDiv = document.createElement('div');
@@ -63,17 +87,34 @@ async function getCoordinates(entry) {
             return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         } else {
             console.warn(`Could not geocode address: ${entry.address}`);
-            return [9.2037, 123.1914];
+            return null;
         }
     } catch (error) {
         console.error('Geocoding error:', error);
-        return [9.2037, 123.1914];
+        return null;
     }
 }
 
 // Initialize map
 async function initializeMap(entries) {
-    const map = L.map('map').setView([9.2037, 123.1914], 14);
+    // Get coordinates for all entries first
+    const coordsPromises = entries.map(entry => getCoordinates(entry));
+    const allCoords = await Promise.all(coordsPromises);
+
+    // Filter out null coordinates
+    const validCoords = allCoords.filter(coords => coords !== null);
+
+    if (validCoords.length === 0) {
+        // No valid coordinates, show empty map
+        const map = L.map('map').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        return;
+    }
+
+    // Initialize map with first valid coordinate
+    const map = L.map('map').setView(validCoords[0], 14);
     
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
@@ -89,10 +130,16 @@ async function initializeMap(entries) {
     
     const markers = [];
     
-    // Add markers for each entry
+    // Add markers for each entry with valid coordinates
     for (let i = 0; i < entries.length; i++) {
         const entry = entries[i];
-        const coords = await getCoordinates(entry);
+        const coords = allCoords[i];
+
+        if (coords === null) {
+            console.warn(`Skipping marker for "${entry.title}" - no valid coordinates`);
+            continue;
+        }
+
         const marker = L.marker(coords, { icon: customIcon }).addTo(map);
         
         marker.bindPopup(`
@@ -102,16 +149,7 @@ async function initializeMap(entries) {
                 <div class="popup-description">${entry.description}</div>
             </div>
         `);
-        
-        // Add number label
-        const numberIcon = L.divIcon({
-            className: 'number-marker',
-            html: `<div style="background-color: #764ba2; color: white; width: 25px; height: 25px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 2px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.3);">${i + 1}</div>`,
-            iconSize: [25, 25],
-            iconAnchor: [12.5, 12.5]
-        });
-        
-        L.marker([coords[0] + 0.0005, coords[1] + 0.0005], { icon: numberIcon }).addTo(map);
+
         markers.push(marker);
     }
     
@@ -124,19 +162,87 @@ async function initializeMap(entries) {
 
 // Populate page content
 async function populateContent(tripData) {
+    // Update page title
+    document.title = tripData.title + ' - Trip Itinerary';
+    
     // Update header
     document.getElementById('trip-title').textContent = tripData.title;
     document.getElementById('trip-description').textContent = tripData.description;
-    document.getElementById('trip-date').textContent = formatDate(tripData.date);
     document.getElementById('trip-duration').textContent = `${tripData.duration} day${tripData.duration > 1 ? 's' : ''}`;
     
-    // Create timeline
+    // Update author info if available
+    if (tripData.author && tripData.author.full_name && tripData.author.ig_url) {
+        const authorSection = document.getElementById('author-section');
+        const authorLink = document.getElementById('trip-author');
+        const authorAvatar = document.getElementById('author-avatar');
+        
+        authorLink.textContent = tripData.author.full_name;
+        authorLink.href = tripData.author.ig_url;
+        
+        // Add profile image if available
+        if (tripData.author.profile_img) {
+            authorAvatar.src = tripData.author.profile_img;
+            authorAvatar.alt = tripData.author.full_name;
+            authorAvatar.style.display = 'inline-block';
+        }
+        
+        authorSection.style.display = 'flex';
+    }
+    
+    // Update source link
+    if (tripData.source_url) {
+        const originalSection = document.getElementById('original-section');
+        const sourceLink = document.getElementById('source-link');
+        sourceLink.href = tripData.source_url;
+        originalSection.style.display = 'block';
+    }
+    
+    // Update OTA buttons
+    if (tripData.ota && Array.isArray(tripData.ota) && tripData.ota.length > 0) {
+        const bookingSection = document.getElementById('booking-section');
+        const otaContainer = document.getElementById('ota-buttons');
+        otaContainer.innerHTML = '';
+        
+        tripData.ota.forEach(ota => {
+            if (ota.provider && ota.url) {
+                const otaButton = document.createElement('a');
+                otaButton.className = 'ota-btn';
+                otaButton.href = ota.url;
+                otaButton.target = '_blank';
+                
+                // Capitalize provider name
+                const providerName = ota.provider.charAt(0).toUpperCase() + ota.provider.slice(1);
+                otaButton.textContent = `Book on ${providerName}`;
+                
+                otaContainer.appendChild(otaButton);
+            }
+        });
+        
+        bookingSection.style.display = 'block';
+        
+        // Also populate CTA section
+        populateCTASection(tripData.ota);
+    }
+    
+    // Create timeline grouped by day
     const timeline = document.getElementById('timeline');
     timeline.innerHTML = '';
     
-    tripData.entries.forEach(entry => {
-        const entryElement = createTimelineEntry(entry);
-        timeline.appendChild(entryElement);
+    const groupedEntries = groupEntriesByDay(tripData.entries);
+    const sortedDays = Object.keys(groupedEntries).sort((a, b) => parseInt(a) - parseInt(b));
+
+    sortedDays.forEach(day => {
+        const dayEntries = groupedEntries[day];
+
+        // Add day header
+        const dayHeader = createDayHeader(day, dayEntries.length);
+        timeline.appendChild(dayHeader);
+
+        // Add entries for this day
+        dayEntries.forEach(entry => {
+            const entryElement = createTimelineEntry(entry);
+            timeline.appendChild(entryElement);
+        });
     });
     
     // Initialize map
@@ -150,6 +256,50 @@ async function init() {
         await populateContent(tripData);
     } else {
         document.body.innerHTML = '<div style="text-align: center; padding: 50px; font-size: 1.2rem; color: #e53e3e;">Error loading trip data. Please check that data.json is available.</div>';
+    }
+}
+
+// Populate CTA section
+function populateCTASection(otaProviders) {
+    const ctaSection = document.getElementById('cta-section');
+    const ctaButtons = document.getElementById('cta-buttons');
+    
+    if (otaProviders && otaProviders.length > 0) {
+        ctaButtons.innerHTML = '';
+        
+        otaProviders.forEach((ota, index) => {
+            if (ota.provider && ota.url) {
+                const ctaButton = document.createElement('a');
+                ctaButton.className = 'cta-btn';
+                ctaButton.href = ota.url;
+                ctaButton.target = '_blank';
+                
+                // Create compelling CTA text based on provider
+                let ctaText = '';
+                if (ota.provider.toLowerCase().includes('trip')) {
+                    ctaText = '🌟 Book with Trip.com - Best Prices Guaranteed!';
+                } else if (ota.provider.toLowerCase().includes('agoda')) {
+                    ctaText = '🏆 Book with Agoda - Instant Confirmation!';
+                } else {
+                    const providerName = ota.provider.charAt(0).toUpperCase() + ota.provider.slice(1);
+                    ctaText = `🎯 Book with ${providerName} - Start Your Adventure!`;
+                }
+                
+                ctaButton.innerHTML = `
+                    <span class="cta-btn-text">${ctaText}</span>
+                    <span class="cta-btn-arrow">→</span>
+                `;
+                
+                // Add special styling for primary CTA
+                if (index === 0) {
+                    ctaButton.classList.add('cta-btn-primary');
+                }
+                
+                ctaButtons.appendChild(ctaButton);
+            }
+        });
+        
+        ctaSection.style.display = 'block';
     }
 }
 
